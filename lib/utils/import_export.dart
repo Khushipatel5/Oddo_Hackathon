@@ -1,0 +1,1 @@
+export 'package:oddo_hackathon_project/utils/string_const.dart';
