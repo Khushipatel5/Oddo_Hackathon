@@ -7,4 +7,5 @@ class AppColors {
   static const Color formContainerColor = Color(0xFF344f77);
   static const Color buttonColor = Color(0xFFced7e0); // Light grey-blue
   static const Color buttonTextColor = Color(0xFF2b4d5e); // Button text
+  static const Color cardColor = Colors.white;
 }
