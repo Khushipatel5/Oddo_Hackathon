@@ -1,18 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:oddo_hackathon_project/constants.dart';
 
 class LoginScreen extends StatelessWidget {
-  static const Color primaryColor = Color(0xFF344f77); // Dark blue
-  static const Color backgroundColor = Colors.white;
-  static const Color inputFieldColor = Colors.white;
-  static const Color formContainerColor = Color(0xFF344f77); // Dark blue
-  static const Color buttonColor = Color(0xFFced7e0); // Light blue
-  static const Color buttonTextColor = Color(0xFF2b4d5e);
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: primaryColor,
+      backgroundColor: AppColors.primaryColor,
       body: SafeArea(
         child: Column(
           children: [
@@ -30,7 +25,7 @@ class LoginScreen extends StatelessWidget {
             Text(
               'Welcome',
               style: GoogleFonts.orbitron(
-                color: inputFieldColor,
+                color: AppColors.inputFieldColor,
                 fontSize: 32,
                 fontWeight: FontWeight.w600,
               ),
@@ -42,7 +37,7 @@ class LoginScreen extends StatelessWidget {
               icon: Icons.person,
               hint: 'Email or Phone',
               obscureText: false,
-              color: inputFieldColor,
+              color: AppColors.inputFieldColor,
             ),
             const SizedBox(height: 16),
 
@@ -51,7 +46,7 @@ class LoginScreen extends StatelessWidget {
               icon: Icons.lock,
               hint: 'Password',
               obscureText: true,
-              color: inputFieldColor,
+              color: AppColors.inputFieldColor,
             ),
             const SizedBox(height: 10),
 
@@ -60,7 +55,7 @@ class LoginScreen extends StatelessWidget {
               onPressed: () {},
               child: Text(
                 'Forgot Password?',
-                style: TextStyle(color: inputFieldColor.withOpacity(0.8)),
+                style: TextStyle(color: AppColors.inputFieldColor.withOpacity(0.8)),
               ),
             ),
             const SizedBox(height: 10),
@@ -91,8 +86,8 @@ class LoginScreen extends StatelessWidget {
                     _mainButton(
                       context,
                       label: 'Login',
-                      bgColor: primaryColor,
-                      textColor: inputFieldColor,
+                      bgColor: AppColors.primaryColor,
+                      textColor: AppColors.inputFieldColor,
                       isPrimary: true,
                     ),
                     const SizedBox(height: 16),
@@ -106,8 +101,8 @@ class LoginScreen extends StatelessWidget {
                     _mainButton(
                       context,
                       label: 'Create an account',
-                      bgColor: buttonColor,
-                      textColor: buttonTextColor,
+                      bgColor: AppColors.buttonColor,
+                      textColor: AppColors.buttonTextColor,
                       isPrimary: false,
                     ),
                   ],
@@ -171,7 +166,7 @@ class LoginScreen extends StatelessWidget {
           ]
               : [],
           border: Border.all(
-            color: isPrimary ? Colors.white70 : formContainerColor, // Customize
+            color: isPrimary ? Colors.white70 : AppColors.formContainerColor, // Customize
             width: 1.5,
           ),
         ),

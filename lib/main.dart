@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:oddo_hackathon_project/Screens/Login.dart';
 import 'package:oddo_hackathon_project/Screens/Profile.dart';
 import 'package:oddo_hackathon_project/screens/sign_up_page.dart';
+import 'package:oddo_hackathon_project/screens/swap_request_page.dart';
 
 import 'screens/ResetPasswordPage.dart';
 
@@ -37,7 +38,11 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
+<<<<<<< HEAD
       home: LoginScreen(),
+=======
+      home: SkillSwapScreen(),
+>>>>>>> 088f224bfad008d16ea830c27db6f8e35848db52
     );
   }
 }
