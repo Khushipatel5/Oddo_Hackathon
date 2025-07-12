@@ -130,4 +130,52 @@ class Db_Methods{
     );
   }
 //endregion
+  // region table swap request
+
+  Future<int> insertSwapRequest(SwapRequest swapRequest) async {
+    final db = await _database.initDatabase();
+    return await db.insert(TBL_SWAP_REQUESTS_NAME, swapRequest.toMap(),
+        conflictAlgorithm: ConflictAlgorithm.replace);
+  }
+
+  Future<List<SwapRequest>> getSwapRequests() async {
+    final db = await _database.initDatabase();
+    final List<Map<String, dynamic>> maps = await db.query(TBL_SWAP_REQUESTS_NAME);
+    return List.generate(maps.length, (i) {
+      return SwapRequest.fromMap(maps[i]);
+    });
+  }
+
+  Future<SwapRequest?> getSwapRequestById(int swapId) async {
+    final db = await _database.initDatabase();
+    final List<Map<String, dynamic>> maps = await db.query(
+      TBL_SWAP_REQUESTS_NAME,
+      where: '$COL_SWAP_ID = ?',
+      whereArgs: [swapId],
+    );
+    if (maps.isNotEmpty) {
+      return SwapRequest.fromMap(maps.first);
+    }
+    return null;
+  }
+
+  Future<int> updateSwapRequest(SwapRequest swapRequest) async {
+    final db = await _database.initDatabase();
+    return await db.update(
+      TBL_SWAP_REQUESTS_NAME,
+      swapRequest.toMap(),
+      where: '$COL_SWAP_ID = ?',
+      whereArgs: [swapRequest.swapId],
+    );
+  }
+
+  Future<int> deleteSwapRequest(int swapId) async {
+    final db = await _database.initDatabase();
+    return await db.delete(
+      TBL_SWAP_REQUESTS_NAME,
+      where: '$COL_SWAP_ID = ?',
+      whereArgs: [swapId],
+    );
+  }
+//end region
 }

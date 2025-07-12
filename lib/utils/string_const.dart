@@ -14,6 +14,7 @@ const String COL_USER_NAME = "name";
 const String COL_USER_EMAIL = "email";
 const String COL_USER_BIO = "bio";
 const String COL_USER_IMAGE_URL = "image_url";
+const String COL_USER_IS_PUBLIC = "is_public";
 
 const String COL_SKILL_ID = "skill_id ";
 const String COL_SKILL_NAME = "skill_name";
