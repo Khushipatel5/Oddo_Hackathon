@@ -5,9 +5,9 @@ class AppConstants {
   static const Color primaryColor = Color(0xFF344f77); // Dark blue
   static const Color backgroundColor = Colors.white;
   static const Color inputFieldColor = Colors.white;
-  static const Color formContainerColor = Color(0xFF344f77);
-  static const Color buttonColor = Color(0xFFced7e0); // Light grey-blue
-  static const Color buttonTextColor = Color(0xFF2b4d5e); // Button text
+  static const Color formContainerColor = Color(0xFF344f77); // Dark blue
+  static const Color buttonColor = Color(0xFFced7e0); // Light blue
+  static const Color buttonTextColor = Color(0xFF2b4d5e);
 }
 
 class ValidationUtils {
@@ -44,7 +44,7 @@ class ReusableButton extends StatelessWidget {
       ),
       child: Text(
         text,
-        style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+        style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 16),
       ),
     );
   }
@@ -78,12 +78,22 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
 
   @override
   Widget build(BuildContext context) {
+    final screenHeight = MediaQuery.of(context).size.height;
+
     return Scaffold(
       backgroundColor: AppConstants.backgroundColor,
       body: SafeArea(
         child: Column(
           children: [
-            const SizedBox(height: 40),
+            const SizedBox(height: 20),
+            const Align(
+              alignment: Alignment.topLeft,
+              child: Padding(
+                padding: EdgeInsets.only(left: 16.0),
+                child: Icon(Icons.more_horiz, color: AppConstants.primaryColor),
+              ),
+            ),
+            const SizedBox(height: 100),
             const Icon(Icons.lock_outline, size: 80, color: AppConstants.primaryColor),
             const SizedBox(height: 20),
             Text(
@@ -97,77 +107,94 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
             const SizedBox(height: 10),
             const Text(
               "No worries, we’ll send you\nreset instructions",
-              style: TextStyle(fontSize: 14, color: Colors.black87),
+              style: TextStyle(fontSize: 14, color: AppConstants.primaryColor),
               textAlign: TextAlign.center,
             ),
-            const SizedBox(height: 30),
+            const SizedBox(height: 100),
 
-            // Bottom Form Container
+            // Rounded container at the bottom
             Expanded(
               child: Container(
                 width: double.infinity,
                 decoration: const BoxDecoration(
                   color: AppConstants.formContainerColor,
-                  borderRadius: BorderRadius.vertical(top: Radius.circular(40)),
+                  borderRadius: BorderRadius.vertical(top: Radius.circular(30)),
                 ),
-                padding: const EdgeInsets.all(24.0),
-                child: Form(
-                  key: _formKey,
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Align(
-                        alignment: Alignment.centerLeft,
-                        child: Text(
-                          "Email",
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold,
-                          ),
+                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Center(
+                      child: Form(
+                        key: _formKey,
+                        child: Column(
+
+                          children: [
+                            SizedBox(height: 60,),
+                            const Align(
+                              alignment: Alignment.centerLeft,
+                              child: Text(
+                                "Email",
+                                style: TextStyle(color: Colors.white, fontWeight: FontWeight.w600 , fontSize: 20),
+                              ),
+                            ),
+                            const SizedBox(height: 20),
+                            TextFormField(
+                              controller: _emailController,
+                              style: const TextStyle(color: Colors.black),
+                              decoration: InputDecoration(
+                                hintText: 'Enter your Email',
+                                prefixIcon: const Icon(Icons.email, color: AppConstants.primaryColor),
+                                filled: true,
+                                fillColor: AppConstants.inputFieldColor,
+                                contentPadding: const EdgeInsets.symmetric(vertical: 0, horizontal: 20),
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(30),
+                                  borderSide: BorderSide.none,
+                                ),
+                              ),
+                              validator: ValidationUtils.validateEmail,
+                            ),
+                            const SizedBox(height: 30),
+                            ReusableButton(
+                              text: 'Reset Password',
+                              onPressed: _resetPassword,
+                            ),
+                            const SizedBox(height: 20),
+                            TextButton(
+                              onPressed: () => Navigator.pop(context),
+                              child: const Text(
+                                'Back to Login',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  decoration: TextDecoration.underline,
+                                ),
+                              ),
+                            ),
+                            if (_errorMessage != null) ...[
+                              const SizedBox(height: 10),
+                              Text(
+                                _errorMessage!,
+                                style: const TextStyle(color: Colors.red),
+                              ),
+                            ],
+                          ],
                         ),
                       ),
-                      const SizedBox(height: 10),
-                      TextFormField(
-                        controller: _emailController,
-                        style: const TextStyle(color: Colors.black),
-                        decoration: InputDecoration(
-                          hintText: 'Enter your Email',
-                          prefixIcon: const Icon(Icons.email, color: AppConstants.primaryColor),
-                          filled: true,
-                          fillColor: AppConstants.inputFieldColor,
-                          contentPadding: const EdgeInsets.symmetric(vertical: 0, horizontal: 20),
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(30),
-                            borderSide: BorderSide.none,
-                          ),
-                        ),
-                        validator: ValidationUtils.validateEmail,
+                    ),
+                    SizedBox(
+                      height: 25,
+                    ),
+                    // Bottom center back button
+                    Container(
+                      padding: const EdgeInsets.only(bottom: 10),
+                      child: CircleAvatar(
+                        radius: 18,
+                        backgroundColor: Colors.white,
+                        child: Icon(Icons.keyboard_return, size: 20, color: AppConstants.primaryColor),
                       ),
-                      const SizedBox(height: 30),
-                      ReusableButton(
-                        text: 'Reset Password',
-                        onPressed: _resetPassword,
-                      ),
-                      const SizedBox(height: 20),
-                      TextButton(
-                        onPressed: () => Navigator.pop(context),
-                        child: const Text(
-                          'Back to Login',
-                          style: TextStyle(
-                            color: Colors.white,
-                            decoration: TextDecoration.underline,
-                          ),
-                        ),
-                      ),
-                      if (_errorMessage != null) ...[
-                        const SizedBox(height: 10),
-                        Text(
-                          _errorMessage!,
-                          style: const TextStyle(color: Colors.red),
-                        ),
-                      ],
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
               ),
             ),

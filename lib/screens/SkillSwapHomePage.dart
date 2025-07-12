@@ -1,12 +1,9 @@
-import 'dart:ui';
 import 'package:flutter/material.dart';
 
 class SkillSwapHomePage extends StatelessWidget {
   static const Color primaryColor = Color(0xFF344f77);
   static const Color backgroundColor = Color(0xFFf3f5f9);
-  static const Color cardGlassColor = Colors.white10;
   static const Color accentColor = Color(0xFFced7e0);
-  static const Color textDark = Color(0xFF2b4d5e);
 
   final List<Map<String, dynamic>> users = [
     {
@@ -29,22 +26,23 @@ class SkillSwapHomePage extends StatelessWidget {
     },
   ];
 
-  Widget skillChip(String label, IconData icon, Color color) {
+  final List<String> categories = [
+    "JavaScript", "Python", "Music", "Graphic Design", "Flutter", "React"
+  ];
+
+  Widget buildSkillChip(String text) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
       margin: const EdgeInsets.only(right: 8, bottom: 6),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.08),
+        color: Colors.white,
+        border: Border.all(color: primaryColor.withOpacity(0.3)),
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: color.withOpacity(0.4)),
       ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(icon, size: 14, color: color),
-          const SizedBox(width: 5),
-          Text(label, style: TextStyle(fontSize: 12, color: color)),
-        ],
+      child: Text(
+        text,
+        style: TextStyle(
+            color: primaryColor, fontWeight: FontWeight.w500, fontSize: 12),
       ),
     );
   }
@@ -53,172 +51,182 @@ class SkillSwapHomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: backgroundColor,
-      appBar: AppBar(
-        backgroundColor: primaryColor,
-        elevation: 4,
-        title: const Text("Skill Swap Platform"),
-        actions: [
-          TextButton(
-            onPressed: () {},
-            child: const Text("Login", style: TextStyle(color: Colors.white)),
-          )
-        ],
-      ),
-      body: Column(
-        children: [
-          // Floating Glass Search Bar
-          Padding(
-            padding: const EdgeInsets.all(14),
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(16),
-              child: BackdropFilter(
-                filter: ImageFilter.blur(sigmaX: 4.5, sigmaY: 4.5),
+      body: SafeArea(
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Header
+              Padding(
+                padding:
+                const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                child: Row(
+                  children: [
+                    const CircleAvatar(
+                      radius: 24,
+                      backgroundImage: AssetImage("assets/profile.jpg"), // Optional
+                    ),
+                    const SizedBox(width: 12),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: const [
+                        Text("Welcome Back!",
+                            style: TextStyle(
+                                fontWeight: FontWeight.bold, fontSize: 16)),
+                        Text("123 Anywhere Street, Any City",
+                            style: TextStyle(fontSize: 12, color: Colors.grey)),
+                      ],
+                    ),
+                    const Spacer(),
+                    Icon(Icons.notifications_none, color: primaryColor),
+                  ],
+                ),
+              ),
+
+              // Search Bar
+              Padding(
+                padding: const EdgeInsets.all(16),
+                child: TextField(
+                  decoration: InputDecoration(
+                    hintText: "Search by skill or availability...",
+                    filled: true,
+                    fillColor: Colors.white,
+                    prefixIcon: Icon(Icons.search, color: primaryColor),
+                    contentPadding:
+                    const EdgeInsets.symmetric(vertical: 0, horizontal: 20),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(30),
+                      borderSide: BorderSide.none,
+                    ),
+                  ),
+                ),
+              ),
+
+              // Banner
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
                 child: Container(
                   padding:
-                  const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                  const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
                   decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.6),
+                    color: primaryColor,
                     borderRadius: BorderRadius.circular(16),
                   ),
                   child: Row(
                     children: [
-                      Icon(Icons.filter_alt_outlined, color: primaryColor),
-                      const SizedBox(width: 8),
                       Expanded(
-                        child: TextField(
-                          decoration: InputDecoration(
-                            hintText: "Search by availability or skill",
-                            border: InputBorder.none,
-                          ),
+                        child: Text(
+                          "Your Skills, Your Power.\nLet’s Swap!",
+                          style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold),
                         ),
                       ),
-                      Icon(Icons.search, color: primaryColor),
+                      const Icon(Icons.swap_horiz,
+                          color: Colors.white, size: 40),
                     ],
                   ),
                 ),
               ),
-            ),
-          ),
 
-          // Glass Cards List
-          Expanded(
-            child: ListView.builder(
-              padding: const EdgeInsets.symmetric(horizontal: 14),
-              itemCount: users.length,
-              itemBuilder: (context, index) {
-                final user = users[index];
-                return Container(
-                  margin: const EdgeInsets.symmetric(vertical: 10),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(20),
-                    gradient: LinearGradient(
-                      colors: [Colors.white, Colors.blueGrey.shade50],
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                    ),
-                    boxShadow: [
-                      BoxShadow(
-                        blurRadius: 12,
-                        spreadRadius: 1,
-                        color: Colors.grey.withOpacity(0.2),
-                        offset: const Offset(4, 4),
+              const SizedBox(height: 20),
+
+              // Skill Categories
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: Wrap(
+                  spacing: 8,
+                  runSpacing: 8,
+                  children:
+                  categories.map((skill) => buildSkillChip(skill)).toList(),
+                ),
+              ),
+
+              const SizedBox(height: 20),
+
+              // Top Users Section
+              const Padding(
+                padding: EdgeInsets.symmetric(horizontal: 16),
+                child: Text("Top Swappers",
+                    style:
+                    TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
+              ),
+
+              const SizedBox(height: 10),
+
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: Column(
+                  children: users.map((user) {
+                    return Container(
+                      margin: const EdgeInsets.only(bottom: 16),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(16),
+                        boxShadow: [
+                          BoxShadow(
+                            blurRadius: 8,
+                            color: Colors.grey.shade300,
+                            offset: const Offset(2, 2),
+                          )
+                        ],
                       ),
-                    ],
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.all(18),
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        CircleAvatar(
-                          radius: 30,
+                      child: ListTile(
+                        leading: const CircleAvatar(
+                          radius: 28,
                           backgroundColor: primaryColor,
                           child: Icon(Icons.person, color: Colors.white),
                         ),
-                        const SizedBox(width: 16),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                user["name"],
-                                style: TextStyle(
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.bold,
-                                  color: primaryColor,
-                                ),
-                              ),
-                              const SizedBox(height: 10),
-                              Text("Skills Offered:",
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.w600,
-                                      color: Colors.green[800])),
-                              Wrap(
-                                children: user["offered"]
-                                    .map<Widget>((s) => skillChip(
-                                    s, Icons.check_circle, Colors.green))
-                                    .toList(),
-                              ),
-                              const SizedBox(height: 6),
-                              Text("Skills Wanted:",
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.w600,
-                                      color: Colors.blue[800])),
-                              Wrap(
-                                children: user["wanted"]
-                                    .map<Widget>((s) => skillChip(
-                                    s, Icons.lightbulb, Colors.blue))
-                                    .toList(),
-                              ),
-                              const SizedBox(height: 6),
-                              Text("Rating: ${user["rating"]}/5",
-                                  style: const TextStyle(color: Colors.black54)),
-                            ],
-                          ),
+                        title: Text(
+                          user["name"],
+                          style: const TextStyle(fontWeight: FontWeight.bold),
                         ),
-                        ElevatedButton(
-                          onPressed: () {},
+                        subtitle: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const SizedBox(height: 4),
+                            Text(
+                                "Offers: ${user["offered"].join(", ")}",
+                                style: const TextStyle(fontSize: 12)),
+                            Text(
+                                "Wants: ${user["wanted"].join(", ")}",
+                                style: const TextStyle(fontSize: 12)),
+                            const SizedBox(height: 4),
+                            Row(
+                              children: [
+                                const Icon(Icons.star,
+                                    size: 16, color: Colors.amber),
+                                const SizedBox(width: 4),
+                                Text("${user["rating"]}/5",
+                                    style: const TextStyle(fontSize: 12)),
+                              ],
+                            ),
+                          ],
+                        ),
+                        trailing: ElevatedButton(
+                          onPressed: () {
+                            // Handle swap request
+                          },
                           style: ElevatedButton.styleFrom(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 20, vertical: 12),
                             backgroundColor: accentColor,
-                            foregroundColor: textDark,
-                            elevation: 4,
+                            foregroundColor: primaryColor,
                             shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(22),
+                              borderRadius: BorderRadius.circular(20),
                             ),
                           ),
-                          child: const Text("Request"),
+                          child: const Text("Swap"),
                         ),
-                      ],
-                    ),
-                  ),
-                );
-              },
-            ),
-          ),
+                      ),
+                    );
+                  }).toList(),
+                ),
+              ),
 
-          // Ripple Pagination
-          Padding(
-            padding: const EdgeInsets.only(bottom: 18),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: List.generate(7, (index) {
-                bool isActive = index == 0;
-                return AnimatedContainer(
-                  duration: const Duration(milliseconds: 300),
-                  margin: const EdgeInsets.symmetric(horizontal: 4),
-                  width: isActive ? 18 : 8,
-                  height: 8,
-                  decoration: BoxDecoration(
-                    color: isActive ? primaryColor : Colors.grey.shade400,
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                );
-              }),
-            ),
+              const SizedBox(height: 30),
+            ],
           ),
-        ],
+        ),
       ),
     );
   }

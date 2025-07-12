@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:oddo_hackathon_project/screens/SkillSwapHomePage.dart';
+import 'package:oddo_hackathon_project/utils/import_export.dart';
+
 
 import 'screens/ResetPasswordPage.dart';
 
@@ -15,6 +16,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Flutter Demo',
+      debugShowCheckedModeBanner: false,
       theme: ThemeData(
         // This is the theme of your application.
         //
