@@ -130,6 +130,7 @@ class Db_Methods{
     );
   }
 //endregion
+
   // region table swap request
 
   Future<int> insertSwapRequest(SwapRequest swapRequest) async {
@@ -177,5 +178,5 @@ class Db_Methods{
       whereArgs: [swapId],
     );
   }
-//end region
+//endregion
 }

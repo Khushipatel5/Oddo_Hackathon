@@ -1,14 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:email_validator/email_validator.dart';
-
-class AppConstants {
-  static const Color primaryColor = Color(0xFF344f77); // Dark blue
-  static const Color backgroundColor = Colors.white;
-  static const Color inputFieldColor = Colors.white;
-  static const Color formContainerColor = Color(0xFF344f77);
-  static const Color buttonColor = Color(0xFFced7e0); // Light grey-blue
-  static const Color buttonTextColor = Color(0xFF2b4d5e); // Button text
-}
+import 'package:oddo_hackathon_project/constants.dart';
 
 class ValidationUtils {
   static String? validateEmail(String? value) {
@@ -36,8 +28,8 @@ class ReusableButton extends StatelessWidget {
     return ElevatedButton(
       onPressed: onPressed,
       style: ElevatedButton.styleFrom(
-        backgroundColor: AppConstants.buttonColor,
-        foregroundColor: AppConstants.buttonTextColor,
+        backgroundColor: AppColors.buttonColor,
+        foregroundColor: AppColors.buttonTextColor,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
         minimumSize: const Size(double.infinity, 50),
         elevation: 0,
@@ -79,19 +71,19 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppConstants.backgroundColor,
+      backgroundColor: AppColors.backgroundColor,
       body: SafeArea(
         child: Column(
           children: [
             const SizedBox(height: 40),
-            const Icon(Icons.lock_outline, size: 80, color: AppConstants.primaryColor),
+            const Icon(Icons.lock_outline, size: 80, color: AppColors.primaryColor),
             const SizedBox(height: 20),
             Text(
               'Forgot Password?',
               style: TextStyle(
                 fontSize: 28,
                 fontWeight: FontWeight.bold,
-                color: AppConstants.primaryColor,
+                color: AppColors.primaryColor,
               ),
             ),
             const SizedBox(height: 10),
@@ -107,7 +99,7 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
               child: Container(
                 width: double.infinity,
                 decoration: const BoxDecoration(
-                  color: AppConstants.formContainerColor,
+                  color: AppColors.formContainerColor,
                   borderRadius: BorderRadius.vertical(top: Radius.circular(40)),
                 ),
                 padding: const EdgeInsets.all(24.0),
@@ -116,6 +108,7 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
+                      SizedBox(height: 60,),
                       Align(
                         alignment: Alignment.centerLeft,
                         child: Text(
@@ -126,15 +119,15 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
                           ),
                         ),
                       ),
-                      const SizedBox(height: 10),
+                      const SizedBox(height: 20),
                       TextFormField(
                         controller: _emailController,
                         style: const TextStyle(color: Colors.black),
                         decoration: InputDecoration(
                           hintText: 'Enter your Email',
-                          prefixIcon: const Icon(Icons.email, color: AppConstants.primaryColor),
+                          prefixIcon: const Icon(Icons.email, color: AppColors.primaryColor),
                           filled: true,
-                          fillColor: AppConstants.inputFieldColor,
+                          fillColor: AppColors.inputFieldColor,
                           contentPadding: const EdgeInsets.symmetric(vertical: 0, horizontal: 20),
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(30),
