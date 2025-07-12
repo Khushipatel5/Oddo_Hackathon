@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:oddo_hackathon_project/screens/SkillSwapHomePage.dart';
 
 import 'screens/ResetPasswordPage.dart';
 
@@ -33,7 +34,7 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: ResetPasswordPage(),
+      home: SkillSwapHomePage(),
     );
   }
 }
