@@ -133,6 +133,28 @@ class Db_Methods{
 
   // region table swap request
 
+  Future<void> sendSwapRequest({
+    required int fromUserId,
+    required int toUserId,
+    required int offeredSkillId,
+    required int requestedSkillId,
+  }) async {
+    Db_Methods dbMethods = Db_Methods();
+
+    // Create SwapRequest object with default status as 'pending'
+    final swap = SwapRequest(
+      fromUserId: fromUserId,
+      toUserId: toUserId,
+      offeredSkillId: offeredSkillId,
+      requestedSkillId: requestedSkillId,
+      status: "pending", // Default status
+    );
+
+    // Insert into DB
+    await dbMethods.insertSwapRequest(swap);
+  }
+
+
   Future<int> insertSwapRequest(SwapRequest swapRequest) async {
     final db = await _database.initDatabase();
     return await db.insert(TBL_SWAP_REQUESTS_NAME, swapRequest.toMap(),

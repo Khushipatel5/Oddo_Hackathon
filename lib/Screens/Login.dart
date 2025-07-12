@@ -1,8 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:oddo_hackathon_project/constants.dart';
+import 'package:oddo_hackathon_project/screens/sign_up_page.dart';
+import 'package:oddo_hackathon_project/database/db_method.dart';
+import 'package:oddo_hackathon_project/database/table_models.dart';
+import 'package:oddo_hackathon_project/utils/import_export.dart';
 
 class LoginScreen extends StatelessWidget {
+  final TextEditingController emailPhoneController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
+
+  final Db_Methods dbMethods = Db_Methods();
 
   @override
   Widget build(BuildContext context) {
@@ -12,16 +20,12 @@ class LoginScreen extends StatelessWidget {
         child: Column(
           children: [
             const SizedBox(height: 48),
-            // Logo Circle
             CircleAvatar(
               radius: 100,
               backgroundColor: Colors.white.withOpacity(0.1),
-              backgroundImage:
-              AssetImage('assets/images/skill_swap_logo.jpg'), // Your logo
+              backgroundImage: AssetImage('assets/images/skill_swap_logo.jpg'),
             ),
             const SizedBox(height: 32),
-
-            // Welcome Text
             Text(
               'Welcome',
               style: GoogleFonts.orbitron(
@@ -31,36 +35,32 @@ class LoginScreen extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 32),
-
-            // Email / Phone
             _inputField(
+              controller: emailPhoneController,
               icon: Icons.person,
-              hint: 'Email or Phone',
+              hint: 'Email',
               obscureText: false,
               color: AppColors.inputFieldColor,
             ),
             const SizedBox(height: 16),
-
-            // Password
             _inputField(
+              controller: passwordController,
               icon: Icons.lock,
               hint: 'Password',
               obscureText: true,
               color: AppColors.inputFieldColor,
             ),
             const SizedBox(height: 10),
-
-            // Forgot Password
             TextButton(
               onPressed: () {},
               child: Text(
                 'Forgot Password?',
-                style: TextStyle(color: AppColors.inputFieldColor.withOpacity(0.8)),
+                style: TextStyle(
+                  color: AppColors.inputFieldColor.withOpacity(0.8),
+                ),
               ),
             ),
             const SizedBox(height: 10),
-
-            // White container fills remaining height
             Expanded(
               child: Container(
                 width: double.infinity,
@@ -89,6 +89,7 @@ class LoginScreen extends StatelessWidget {
                       bgColor: AppColors.primaryColor,
                       textColor: AppColors.inputFieldColor,
                       isPrimary: true,
+                      onTap: () => login(context),
                     ),
                     const SizedBox(height: 16),
                     Center(
@@ -104,6 +105,12 @@ class LoginScreen extends StatelessWidget {
                       bgColor: AppColors.buttonColor,
                       textColor: AppColors.buttonTextColor,
                       isPrimary: false,
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => SignUpPage()),
+                        );
+                      },
                     ),
                   ],
                 ),
@@ -115,7 +122,55 @@ class LoginScreen extends StatelessWidget {
     );
   }
 
+  Future<void> login(BuildContext context) async {
+    String email = emailPhoneController.text.trim();
+    String password = passwordController.text.trim();
+
+    if (email.isEmpty || password.isEmpty) {
+      showMessage(context, "Please enter both email and password.");
+      return;
+    }
+
+    try {
+      List<User> users = await dbMethods.getUsers();
+
+      // Using constants for fields
+      final matchingUser = users.firstWhere(
+            (user) =>
+        user.toMap()[COL_USER_EMAIL.trim()] == email &&
+            user.toMap()[COL_USER_PASSWORD.trim()] == password,
+      );
+
+      if (matchingUser.toMap()[COL_USER_EMAIL.trim()] != null &&
+          matchingUser.toMap()[COL_USER_EMAIL.trim()] != "") {
+        showMessage(context, "Login Successful!", isError: false);
+        // Navigate to next page if required
+      } else {
+        showMessage(context, "Invalid credentials.");
+      }
+    } catch (e) {
+      showMessage(context, "An error occurred while logging in: $e");
+    }
+  }
+
+  void showMessage(BuildContext context, String message, {bool isError = true}) {
+    showDialog(
+      context: context,
+      builder: (_) => AlertDialog(
+        title: Text(isError ? "Error" : "Success"),
+        content: Text(message),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: Text("OK"),
+          )
+        ],
+      ),
+    );
+  }
+
   Widget _inputField({
+    required TextEditingController controller,
     required IconData icon,
     required String hint,
     required bool obscureText,
@@ -129,6 +184,7 @@ class LoginScreen extends StatelessWidget {
           borderRadius: BorderRadius.circular(25),
         ),
         child: TextField(
+          controller: controller,
           obscureText: obscureText,
           style: TextStyle(color: color),
           decoration: InputDecoration(
@@ -143,14 +199,16 @@ class LoginScreen extends StatelessWidget {
     );
   }
 
-  Widget _mainButton(BuildContext context,
-      {required String label,
+  Widget _mainButton(
+      BuildContext context, {
+        required String label,
         required Color bgColor,
         required Color textColor,
-        required bool isPrimary}){
+        required bool isPrimary,
+        required VoidCallback onTap,
+      }) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 32),
-
       child: Container(
         height: 50,
         decoration: BoxDecoration(
@@ -166,7 +224,7 @@ class LoginScreen extends StatelessWidget {
           ]
               : [],
           border: Border.all(
-            color: isPrimary ? Colors.white70 : AppColors.formContainerColor, // Customize
+            color: isPrimary ? Colors.white70 : AppColors.formContainerColor,
             width: 1.5,
           ),
         ),
@@ -178,7 +236,7 @@ class LoginScreen extends StatelessWidget {
             ),
             shadowColor: Colors.transparent,
           ),
-          onPressed: () {},
+          onPressed: onTap,
           child: Center(
             child: Text(
               label,

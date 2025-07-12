@@ -1,8 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:oddo_hackathon_project/constants.dart';
-
+import 'package:oddo_hackathon_project/database/db_method.dart';
+import 'package:oddo_hackathon_project/database/table_models.dart';
 
 class SkillSwapScreen extends StatefulWidget {
+  final int fromUserId;
+  final int toUserId;
+
+  SkillSwapScreen({
+    required this.fromUserId,
+    required this.toUserId,
+  });
+
   @override
   State<SkillSwapScreen> createState() => _SkillSwapScreenState();
 }
@@ -12,13 +21,22 @@ class _SkillSwapScreenState extends State<SkillSwapScreen> {
   String? selectedWantedSkill;
   TextEditingController messageController = TextEditingController();
 
-  List<String> skills = [
-    "Programming",
-    "Design",
-    "Writing",
-    "Music",
-    "Cooking"
-  ];
+  List<String> skills = [];
+
+  final Db_Methods dbMethods = Db_Methods();
+
+  @override
+  void initState() {
+    super.initState();
+    fetchSkills();
+  }
+
+  Future<void> fetchSkills() async {
+    List<Skill> skillList = await dbMethods.getSkills();
+    setState(() {
+      skills = skillList.map((s) => s.name ?? '').where((s) => s.isNotEmpty).toList();
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -27,7 +45,6 @@ class _SkillSwapScreenState extends State<SkillSwapScreen> {
       body: SingleChildScrollView(
         child: Column(
           children: [
-            // HEADER
             ClipPath(
               child: Container(
                 color: AppColors.primaryColor,
@@ -61,7 +78,6 @@ class _SkillSwapScreenState extends State<SkillSwapScreen> {
               ),
             ),
 
-            // FORM AREA
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 30.0),
               child: Column(
@@ -97,13 +113,49 @@ class _SkillSwapScreenState extends State<SkillSwapScreen> {
                     width: double.infinity,
                     height: 55,
                     child: ElevatedButton(
-                      onPressed: () {},
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: AppColors.buttonColor,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(30),
-                        ),
-                      ),
+                      onPressed: () async {
+                        if (selectedOfferedSkill != null && selectedWantedSkill != null) {
+                          // Example hardcoded user IDs (replace with your app's current user logic)
+                          int fromUserId = 1; // Current logged in user
+                          int toUserId = 2;   // Selected user or target user to request swap
+
+                          // Get skill IDs from selected skill names
+                          Db_Methods db = Db_Methods();
+                          List<Skill> allSkills = await db.getSkills();
+
+                          int? offeredSkillId = allSkills.firstWhere(
+                                (skill) => skill.name == selectedOfferedSkill,
+                            orElse: () => Skill(skillId: -1, name: "", category: ""),
+                          ).skillId;
+
+                          int? requestedSkillId = allSkills.firstWhere(
+                                (skill) => skill.name == selectedWantedSkill,
+                            orElse: () => Skill(skillId: -1, name: "", category: ""),
+                          ).skillId;
+
+                          if (offeredSkillId != null && offeredSkillId > 0 &&
+                              requestedSkillId != null && requestedSkillId > 0) {
+                            await dbMethods.sendSwapRequest(
+                              fromUserId: fromUserId,
+                              toUserId: toUserId,
+                              offeredSkillId: offeredSkillId,
+                              requestedSkillId: requestedSkillId,
+                            );
+
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(content: Text('Swap request submitted successfully')),
+                            );
+                          } else {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(content: Text('Skill not found in database')),
+                            );
+                          }
+                        } else {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(content: Text('Please select both skills')),
+                          );
+                        }
+                      },
                       child: Text(
                         "Submit",
                         style: TextStyle(
@@ -115,7 +167,9 @@ class _SkillSwapScreenState extends State<SkillSwapScreen> {
                   ),
                   SizedBox(height: 20),
                   GestureDetector(
-                    onTap: () {},
+                    onTap: () {
+                      Navigator.pop(context);
+                    },
                     child: Text(
                       "Go back to Dashboard",
                       style: TextStyle(
@@ -135,6 +189,66 @@ class _SkillSwapScreenState extends State<SkillSwapScreen> {
     );
   }
 
+  // Future<void> submitSwapRequest(BuildContext context) async {
+  //   if (selectedOfferedSkill == null ||
+  //       selectedWantedSkill == null ||
+  //       selectedOfferedSkill!.isEmpty ||
+  //       selectedWantedSkill!.isEmpty) {
+  //     showMessage(context, "Please select both skills.");
+  //     return;
+  //   }
+  //
+  //   // Find skill IDs from names
+  //   List<Skill> skillList = await dbMethods.getSkills();
+  //
+  //   Skill? offeredSkill = skillList.firstWhere(
+  //           (skill) => skill.skillName == selectedOfferedSkill,
+  //       orElse: () => Skill(skillId: null));
+  //
+  //   Skill? wantedSkill = skillList.firstWhere(
+  //           (skill) => skill.skillName == selectedWantedSkill,
+  //       orElse: () => Skill(skillId: null));
+  //
+  //   if (offeredSkill.skillId == null || wantedSkill.skillId == null) {
+  //     showMessage(context, "Skill IDs not found in database.");
+  //     return;
+  //   }
+  //
+  //   SwapRequest swapRequest = SwapRequest(
+  //     swapId: null,
+  //     fromUserId: widget.fromUserId,
+  //     toUserId: widget.toUserId,
+  //     offeredSkillId: offeredSkill.skillId,
+  //     requestedSkillId: wantedSkill.skillId,
+  //     status: "Pending",
+  //   );
+  //
+  //   int insertedId = await dbMethods.insertSwapRequest(swapRequest);
+  //
+  //   if (insertedId > 0) {
+  //     showMessage(context, "Swap request submitted!", isError: false);
+  //   } else {
+  //     showMessage(context, "Failed to submit swap request.");
+  //   }
+  // }
+
+  void showMessage(BuildContext context, String message,
+      {bool isError = true}) {
+    showDialog(
+      context: context,
+      builder: (_) => AlertDialog(
+        title: Text(isError ? "Error" : "Success"),
+        content: Text(message),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text("OK"),
+          )
+        ],
+      ),
+    );
+  }
+
   Widget buildDropdownField({
     required String text,
     required IconData icon,
@@ -147,7 +261,10 @@ class _SkillSwapScreenState extends State<SkillSwapScreen> {
       children: [
         Padding(
           padding: const EdgeInsets.all(8.0),
-          child: Text(text , style: TextStyle(fontSize: 20 , fontWeight: FontWeight.w500),),
+          child: Text(
+            text,
+            style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
+          ),
         ),
         Container(
           decoration: BoxDecoration(
@@ -193,25 +310,9 @@ class _SkillSwapScreenState extends State<SkillSwapScreen> {
           hintText: "Message",
           hintStyle: TextStyle(color: Colors.grey),
           border: InputBorder.none,
-          contentPadding: EdgeInsets.symmetric(vertical: 16 , horizontal: 20),
+          contentPadding: EdgeInsets.symmetric(vertical: 16, horizontal: 20),
         ),
       ),
     );
   }
-}
-
-class HeaderClipper extends CustomClipper<Path> {
-  @override
-  Path getClip(Size size) {
-    Path path = Path();
-    path.lineTo(0, size.height);
-    path.lineTo(size.width, size.height);
-    path.lineTo(size.width, 80);
-    path.quadraticBezierTo(size.width, 0, size.width - 80, 0);
-    path.close();
-    return path;
-  }
-
-  @override
-  bool shouldReclip(CustomClipper<Path> oldClipper) => false;
 }
