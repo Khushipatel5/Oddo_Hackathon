@@ -19,6 +19,7 @@ class AppDatabase{
               $COL_USER_NAME TEXT,
               $COL_USER_EMAIL TEXT,
               $COL_USER_BIO TEXT,
+              $COL_USER_IS_PUBLIC BOOLEAN DEFAULT 1,
               $COL_USER_IMAGE_URL TEXT
             )
         ''');
@@ -70,4 +71,6 @@ class AppDatabase{
 
     return _database!;
   }
+
+
 }
