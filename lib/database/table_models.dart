@@ -1,4 +1,4 @@
-//model of user table
+import 'package:oddo_hackathon_project/utils/import_export.dart';
 class User {
   int? userId;
   String name;
@@ -18,22 +18,22 @@ class User {
   // columns in the database.
   Map<String, dynamic> toMap() {
     return {
-      'user_id': userId,
-      'name': name,
-      'email': email,
-      'bio': bio,
-      'photo_url': photoUrl,
+      COL_USER_ID: userId,
+      COL_USER_NAME: name,
+      COL_USER_EMAIL: email,
+      COL_USER_BIO: bio,
+      COL_USER_IMAGE_URL: photoUrl,
     };
   }
 
   // Convert a Map into a User object.
   factory User.fromMap(Map<String, dynamic> map) {
     return User(
-      userId: map['user_id'],
-      name: map['name'],
-      email: map['email'],
-      bio: map['bio'],
-      photoUrl: map['photo_url'],
+      userId: map[COL_USER_ID],
+      name: map[COL_USER_NAME],
+      email: map[COL_USER_EMAIL],
+      bio: map[COL_USER_BIO],
+      photoUrl: map[COL_USER_IMAGE_URL],
     );
   }
 
@@ -43,7 +43,7 @@ class User {
   }
 }
 
-//model for skill table
+/// Represents a row in the 'skills' table.
 class Skill {
   int? skillId;
   String name;
@@ -57,17 +57,17 @@ class Skill {
 
   Map<String, dynamic> toMap() {
     return {
-      'skill_id': skillId,
-      'name': name,
-      'category': category,
+      COL_SKILL_ID: skillId,
+      COL_SKILL_NAME: name,
+      COL_SKILL_CATAGORY: category,
     };
   }
 
   factory Skill.fromMap(Map<String, dynamic> map) {
     return Skill(
-      skillId: map['skill_id'],
-      name: map['name'],
-      category: map['category'],
+      skillId: map[COL_SKILL_ID],
+      name: map[COL_SKILL_NAME],
+      category: map[COL_SKILL_CATAGORY],
     );
   }
 
@@ -77,49 +77,46 @@ class Skill {
   }
 }
 
-// model for userSkill offered
+/// Represents a row in the 'user_skills_offered' table.
 class UserSkillOffered {
   int? id;
   int userId;
   int skillId;
   String? description;
-  String? level;
+  // Note: 'level' field removed as per database schema
 
   UserSkillOffered({
     this.id,
     required this.userId,
     required this.skillId,
     this.description,
-    this.level,
   });
 
   Map<String, dynamic> toMap() {
     return {
-      'id': id,
-      'user_id': userId,
-      'skill_id': skillId,
-      'description': description,
-      'level': level,
+      ID: id,
+      COL_USER_SKILL_OFFERED_USER_ID: userId,
+      COL_USER_SKILL_OFFERED_ID: skillId,
+      COL_USER_SKILL_OFFERED_DESCRIPTION: description,
     };
   }
 
   factory UserSkillOffered.fromMap(Map<String, dynamic> map) {
     return UserSkillOffered(
-      id: map['id'],
-      userId: map['user_id'],
-      skillId: map['skill_id'],
-      description: map['description'],
-      level: map['level'],
+      id: map[ID],
+      userId: map[COL_USER_SKILL_OFFERED_USER_ID],
+      skillId: map[COL_USER_SKILL_OFFERED_ID],
+      description: map[COL_USER_SKILL_OFFERED_DESCRIPTION],
     );
   }
 
   @override
   String toString() {
-    return 'UserSkillOffered{id: $id, userId: $userId, skillId: $skillId, description: $description, level: $level}';
+    return 'UserSkillOffered{id: $id, userId: $userId, skillId: $skillId, description: $description}';
   }
 }
 
-//model for userskill request
+/// Represents a row in the 'user_skills_requested' table.
 class UserSkillRequested {
   int? id;
   int userId;
@@ -133,17 +130,17 @@ class UserSkillRequested {
 
   Map<String, dynamic> toMap() {
     return {
-      'id': id,
-      'user_id': userId,
-      'skill_id': skillId,
+      ID: id,
+      COL_USER_SKILL_REQUESTED_USER_ID: userId,
+      COL_USER_SKILL_REQUESTED_ID: skillId,
     };
   }
 
   factory UserSkillRequested.fromMap(Map<String, dynamic> map) {
     return UserSkillRequested(
-      id: map['id'],
-      userId: map['user_id'],
-      skillId: map['skill_id'],
+      id: map[ID],
+      userId: map[COL_USER_SKILL_REQUESTED_USER_ID],
+      skillId: map[COL_USER_SKILL_REQUESTED_ID],
     );
   }
 
@@ -153,7 +150,7 @@ class UserSkillRequested {
   }
 }
 
-//model for swap request
+/// Represents a row in the 'swap_requests' table.
 class SwapRequest {
   int? swapId;
   int fromUserId;
@@ -161,7 +158,7 @@ class SwapRequest {
   int offeredSkillId;
   int requestedSkillId;
   String status;
-
+  // Note: 'message' and 'createdAt' fields removed as per database schema
 
   SwapRequest({
     this.swapId,
@@ -170,29 +167,27 @@ class SwapRequest {
     required this.offeredSkillId,
     required this.requestedSkillId,
     required this.status,
-
   });
 
   Map<String, dynamic> toMap() {
     return {
-      'swap_id': swapId,
-      'from_user_id': fromUserId,
-      'to_user_id': toUserId,
-      'offered_skill_id': offeredSkillId,
-      'requested_skill_id': requestedSkillId,
-      'status': status,
-
+      COL_SWAP_ID: swapId,
+      COL_FROM_USER_ID: fromUserId,
+      COL_TO_USER_ID: toUserId,
+      COL_OFFERED_SKILL_ID: offeredSkillId,
+      COL_REQUESTED_SKILL_ID: requestedSkillId,
+      COL_STATUS: status,
     };
   }
 
   factory SwapRequest.fromMap(Map<String, dynamic> map) {
     return SwapRequest(
-      swapId: map['swap_id'],
-      fromUserId: map['from_user_id'],
-      toUserId: map['to_user_id'],
-      offeredSkillId: map['offered_skill_id'],
-      requestedSkillId: map['requested_skill_id'],
-      status: map['status'],
+      swapId: map[COL_SWAP_ID],
+      fromUserId: map[COL_FROM_USER_ID],
+      toUserId: map[COL_TO_USER_ID],
+      offeredSkillId: map[COL_OFFERED_SKILL_ID],
+      requestedSkillId: map[COL_REQUESTED_SKILL_ID],
+      status: map[COL_STATUS],
     );
   }
 
@@ -201,4 +196,3 @@ class SwapRequest {
     return 'SwapRequest{swapId: $swapId, fromUserId: $fromUserId, toUserId: $toUserId, offeredSkillId: $offeredSkillId, requestedSkillId: $requestedSkillId, status: $status}';
   }
 }
-
