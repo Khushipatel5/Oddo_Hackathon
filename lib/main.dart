@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:oddo_hackathon_project/screens/SkillSwapHomePage.dart';
+import 'package:oddo_hackathon_project/screens/feedback.dart';
 import 'package:oddo_hackathon_project/screens/sign_up_page.dart';
 import 'package:oddo_hackathon_project/screens/swap_request_page.dart';
 

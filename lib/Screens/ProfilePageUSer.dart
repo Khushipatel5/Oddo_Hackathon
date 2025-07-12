@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:oddo_hackathon_project/constants.dart';
 
 class ModernProfilePage extends StatefulWidget {
   const ModernProfilePage({super.key});
@@ -9,7 +10,7 @@ class ModernProfilePage extends StatefulWidget {
 
 class _ModernProfilePageState extends State<ModernProfilePage> {
   bool isEditMode = false;
-  final nameController = TextEditingController(text: "Khushi Patel");
+  final nameController = TextEditingController(text: "Heena Solanki");
   final locationController = TextEditingController(text: "Rajkot");
   final availabilityController = TextEditingController(text: "Weekends");
   String profileVisibility = "Public";
@@ -187,6 +188,93 @@ class _ModernProfilePageState extends State<ModernProfilePage> {
             ),
           ),
         ],
+      ),
+      endDrawer: Drawer(
+        backgroundColor: Colors.white,
+        child: SafeArea(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Container(
+                width: double.infinity,
+                padding: const EdgeInsets.all(20),
+                color: AppColors.primaryColor,
+                child: const Text(
+                  "SwapSkills",
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                    letterSpacing: 1.2,
+                  ),
+                ),
+              ),
+              const SizedBox(height: 10),
+
+              ListTile(
+                leading: const Icon(Icons.home, color: AppColors.primaryColor),
+                title: const Text("Home"),
+                onTap: () => Navigator.pop(context),
+              ),
+              ListTile(
+                leading: const Icon(Icons.account_circle, color: AppColors.primaryColor),
+                title: const Text("Profile"),
+                onTap: () {
+                  Navigator.pop(context);
+                  Navigator.push(context, MaterialPageRoute(builder: (_) => ModernProfilePage()));
+                },
+              ),
+
+              const Divider(),
+
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8),
+                child: Text(
+                  "Feedback",
+                  style: TextStyle(
+                    color: AppColors.primaryColor,
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                child: TextField(
+                  maxLines: 3,
+                  decoration: InputDecoration(
+                    hintText: "Write your feedback here...",
+                    fillColor: Colors.grey[100],
+                    filled: true,
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: BorderSide(color: AppColors.primaryColor),
+                    ),
+                  ),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(left: 16, right: 16, top: 12),
+                child: ElevatedButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text("Thank you for your feedback!")),
+                    );
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppColors.primaryColor,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    minimumSize: const Size.fromHeight(45),
+                  ),
+                  child: const Text("Submit Feedback"),
+                ),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }

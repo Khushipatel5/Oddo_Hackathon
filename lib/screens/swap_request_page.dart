@@ -4,13 +4,10 @@ import 'package:oddo_hackathon_project/database/db_method.dart';
 import 'package:oddo_hackathon_project/database/table_models.dart';
 
 class SkillSwapScreen extends StatefulWidget {
-  final int fromUserId;
-  final int toUserId;
+  // final int fromUserId;
+  // final int toUserId;
 
-  SkillSwapScreen({
-    required this.fromUserId,
-    required this.toUserId,
-  });
+  SkillSwapScreen();
 
   @override
   State<SkillSwapScreen> createState() => _SkillSwapScreenState();
@@ -113,43 +110,46 @@ class _SkillSwapScreenState extends State<SkillSwapScreen> {
                     width: double.infinity,
                     height: 55,
                     child: ElevatedButton(
-                      onPressed: () async {
-                        if (selectedOfferedSkill != null && selectedWantedSkill != null) {
-                          List<Skill> allSkills = await dbMethods.getSkills();
+                      onPressed: () {
 
-                          int? offeredSkillId = allSkills.firstWhere(
-                                (skill) => skill.name == selectedOfferedSkill,
-                            orElse: () => Skill(skillId: -1, name: "", category: ""),
-                          ).skillId;
-
-                          int? requestedSkillId = allSkills.firstWhere(
-                                (skill) => skill.name == selectedWantedSkill,
-                            orElse: () => Skill(skillId: -1, name: "", category: ""),
-                          ).skillId;
-
-                          if (offeredSkillId != null && offeredSkillId > 0 &&
-                              requestedSkillId != null && requestedSkillId > 0) {
-                            await dbMethods.sendSwapRequest(
-                              fromUserId: widget.fromUserId,
-                              toUserId: widget.toUserId,
-                              offeredSkillId: offeredSkillId,
-                              requestedSkillId: requestedSkillId,
-                            );
-
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(content: Text('Swap request submitted successfully')),
-                            );
-                          } else {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(content: Text('Skill not found in database')),
-                            );
-                          }
-                        } else {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(content: Text('Please select both skills')),
-                          );
-                        }
                       },
+                      // onPressed: () async {
+                      //   if (selectedOfferedSkill != null && selectedWantedSkill != null) {
+                      //     List<Skill> allSkills = await dbMethods.getSkills();
+                      //
+                      //     int? offeredSkillId = allSkills.firstWhere(
+                      //           (skill) => skill.name == selectedOfferedSkill,
+                      //       orElse: () => Skill(skillId: -1, name: "", category: ""),
+                      //     ).skillId;
+                      //
+                      //     int? requestedSkillId = allSkills.firstWhere(
+                      //           (skill) => skill.name == selectedWantedSkill,
+                      //       orElse: () => Skill(skillId: -1, name: "", category: ""),
+                      //     ).skillId;
+                      //
+                      //     if (offeredSkillId != null && offeredSkillId > 0 &&
+                      //         requestedSkillId != null && requestedSkillId > 0) {
+                      //       await dbMethods.sendSwapRequest(
+                      //         // fromUserId: widget.fromUserId,
+                      //         // toUserId: widget.toUserId,
+                      //         // offeredSkillId: offeredSkillId,
+                      //         // requestedSkillId: requestedSkillId,
+                      //       );
+                      //
+                      //       ScaffoldMessenger.of(context).showSnackBar(
+                      //         SnackBar(content: Text('Swap request submitted successfully')),
+                      //       );
+                      //     } else {
+                      //       ScaffoldMessenger.of(context).showSnackBar(
+                      //         SnackBar(content: Text('Skill not found in database')),
+                      //       );
+                      //     }
+                      //   } else {
+                      //     ScaffoldMessenger.of(context).showSnackBar(
+                      //       SnackBar(content: Text('Please select both skills')),
+                      //     );
+                      //   }
+                      // },
                       child: Text(
                         "Submit",
                         style: TextStyle(

@@ -4,6 +4,7 @@ import 'package:oddo_hackathon_project/Screens/Login.dart';
 import 'package:oddo_hackathon_project/constants.dart';
 import 'package:oddo_hackathon_project/database/db_method.dart';
 import 'package:oddo_hackathon_project/database/table_models.dart';
+import 'package:oddo_hackathon_project/screens/Profile.dart';
 import 'package:oddo_hackathon_project/screens/ProfilePageUSer.dart';
 import 'package:oddo_hackathon_project/screens/swap_request_page.dart';
 
@@ -295,7 +296,7 @@ class _SkillSwapHomePageState extends State<SkillSwapHomePage> {
                       child: ListTile(
                         onTap: () {
                           Navigator.of(context).push(
-                            MaterialPageRoute(builder: (context) => ModernProfilePage()),
+                            MaterialPageRoute(builder: (context) => SkillSwapProfileUI()),
                           );
                         },
                         leading: const CircleAvatar(
@@ -312,8 +313,8 @@ class _SkillSwapHomePageState extends State<SkillSwapHomePage> {
                           children: [
                             const SizedBox(height: 4),
                             if (showAvailability) ...[
-                              const Text("Offers: N/A", style: TextStyle(fontSize: 12)),
-                              const Text("Wants: N/A", style: TextStyle(fontSize: 12)),
+                              const Text("Offers: JavaScript , python", style: TextStyle(fontSize: 12)),
+                              const Text("Wants: Music graphic design", style: TextStyle(fontSize: 12)),
                             ],
                             const SizedBox(height: 4),
                             Row(
@@ -331,8 +332,8 @@ class _SkillSwapHomePageState extends State<SkillSwapHomePage> {
                               context,
                               MaterialPageRoute(
                                 builder: (_) => SkillSwapScreen(
-                                  fromUserId: 1,
-                                  toUserId: user.userId!,
+                                  // fromUserId: 1,
+                                  // toUserId: user.userId!,
                                 ),
                               ),
                             );

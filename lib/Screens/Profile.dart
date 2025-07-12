@@ -6,13 +6,13 @@ import 'package:oddo_hackathon_project/database/table_models.dart';
 import 'package:oddo_hackathon_project/screens/swap_request_page.dart';
 
 class SkillSwapProfileUI extends StatefulWidget {
-  final User user;
-  final int currentUserId; // Needed for the "Request Swap" button
+  // final User user;
+  // final int currentUserId; // Needed for the "Request Swap" button
 
   const SkillSwapProfileUI({
     super.key,
-    required this.user,
-    required this.currentUserId,
+    // required this.user,
+    // required this.currentUserId,
   });
 
   @override
@@ -51,21 +51,22 @@ class _SkillSwapProfileUIState extends State<SkillSwapProfileUI> {
                 CircleAvatar(
                   radius: 55,
                   backgroundColor: Colors.white,
-                  backgroundImage: widget.user.imageUrl != null && widget.user.imageUrl!.isNotEmpty
-                      ? MemoryImage(base64Decode(widget.user.imageUrl!))
-                      : null,
-                  child: widget.user.imageUrl == null || widget.user.imageUrl!.isEmpty
-                      ? const Icon(Icons.person, size: 60, color: AppColors.primaryColor)
-                      : null,
+                  child: Icon(Icons.person),
+                  // backgroundImage: widget.user.imageUrl != null && widget.user.imageUrl!.isNotEmpty
+                  //     ? MemoryImage(base64Decode(widget.user.imageUrl!))
+                  //     : null,
+                  // child: widget.user.imageUrl == null || widget.user.imageUrl!.isEmpty
+                  //     ? const Icon(Icons.person, size: 60, color: AppColors.primaryColor)
+                  //     : null,
                 ),
                 const SizedBox(height: 12),
                 Text(
-                  widget.user.name,
+                  "Khushi patel",
                   style: const TextStyle(color: Colors.white, fontSize: 25, fontWeight: FontWeight.bold),
                 ),
                 Text(
                   // Provide default text if location is null
-                  widget.user.location ?? 'Location not specified',
+                  "Rajkot "?? 'Location not specified',
                   style: const TextStyle(color: Colors.white70, fontSize: 17),
                 ),
               ],
@@ -77,7 +78,7 @@ class _SkillSwapProfileUIState extends State<SkillSwapProfileUI> {
             child: ListView(
               padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
               children: [
-                _buildDetailCard("Bio", widget.user.bio ?? 'No bio provided.'),
+                _buildDetailCard("Bio", "SoftWare engineer " ?? 'No bio provided.'),
                 _buildSkillSection("Offers", offers),
                 _buildSkillSection("Wants", wants),
                 _buildDetailCard("Availability", availability),
@@ -93,8 +94,8 @@ class _SkillSwapProfileUIState extends State<SkillSwapProfileUI> {
                         context,
                         MaterialPageRoute(
                           builder: (context) => SkillSwapScreen(
-                            fromUserId: widget.currentUserId,
-                            toUserId: widget.user.userId!,
+                            // fromUserId: widget.currentUserId,
+                            // toUserId: widget.user.userId!,
                           ),
                         ),
                       );
