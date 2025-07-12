@@ -1,6 +1,12 @@
+import 'dart:convert';
+import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:oddo_hackathon_project/Screens/Login.dart';
 import 'package:oddo_hackathon_project/constants.dart';
-
+import 'package:oddo_hackathon_project/database/db_method.dart';
+import 'package:oddo_hackathon_project/database/table_models.dart';
+import 'package:oddo_hackathon_project/screens/SkillSwapHomePage.dart';
 
 class SignUpPage extends StatefulWidget {
   @override
@@ -8,7 +14,71 @@ class SignUpPage extends StatefulWidget {
 }
 
 class _SignUpPageState extends State<SignUpPage> {
+  final _dbMethods = Db_Methods();
+
+  final _nameController = TextEditingController();
+  final _emailController = TextEditingController();
+  final _bioController = TextEditingController();
+  final _locationController = TextEditingController();
+  final _passwordController = TextEditingController();
+  final _retypePasswordController = TextEditingController();
+
+  File? pickedImageFile;
+  String? pickedImageBase64;
   bool isChecked = false;
+
+  Future<void> pickImage() async {
+    final picker = ImagePicker();
+    final pickedFile = await picker.pickImage(source: ImageSource.gallery);
+    if (pickedFile != null) {
+      final bytes = await pickedFile.readAsBytes();
+      setState(() {
+        pickedImageFile = File(pickedFile.path);
+        pickedImageBase64 = base64Encode(bytes);
+      });
+    }
+  }
+
+  Future<void> saveUserToDatabase() async {
+    if (!isChecked) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Please accept Terms & Privacy.")),
+      );
+      return;
+    }
+
+    if (_passwordController.text != _retypePasswordController.text) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Passwords do not match.")),
+      );
+      return;
+    }
+
+    final newUser = User(
+      name: _nameController.text,
+      email: _emailController.text,
+      bio: _bioController.text,
+      imageUrl: pickedImageBase64 ?? "",
+      location: _locationController.text,
+      password: _passwordController.text,
+      isPublic: "true",
+    );
+
+    await _dbMethods.insertUser(newUser);
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text("User registered successfully.")),
+    );
+
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(
+        builder: (_) => SkillSwapHomePage(),
+      ),
+    );
+
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -18,7 +88,6 @@ class _SignUpPageState extends State<SignUpPage> {
         child: ListView(
           padding: EdgeInsets.zero,
           children: [
-            // HEADER
             ClipPath(
               clipper: TopRightRoundedClipper(),
               child: Container(
@@ -41,10 +110,10 @@ class _SignUpPageState extends State<SignUpPage> {
                         ),
                       ),
                       Text(
-                        "Create Your Account",
+                        "Create Your \nAccount",
                         style: TextStyle(
                           color: AppColors.backgroundColor,
-                          fontSize: 38,
+                          fontSize: 29,
                           fontWeight: FontWeight.bold,
                           height: 1.2,
                         ),
@@ -54,32 +123,38 @@ class _SignUpPageState extends State<SignUpPage> {
                 ),
               ),
             ),
+            SizedBox(
+              height: 20,
+            ),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 30.0),
               child: Column(
                 children: [
+                  GestureDetector(
+                    onTap: pickImage,
+                    child: CircleAvatar(
+                      radius: 50,
+                      backgroundColor: AppColors.primaryColor.withOpacity(0.2),
+                      backgroundImage: pickedImageFile != null
+                          ? FileImage(pickedImageFile!)
+                          : null,
+                      child: pickedImageFile == null
+                          ? Icon(Icons.camera_alt, color: AppColors.primaryColor, size: 30)
+                          : null,
+                    ),
+                  ),
                   SizedBox(height: 30),
-                  buildTextField(
-                    icon: Icons.person,
-                    hintText: 'Full Name',
-                  ),
+                  buildTextField(controller: _nameController, icon: Icons.person, hintText: 'Full Name'),
                   SizedBox(height: 20),
-                  buildTextField(
-                    icon: Icons.email,
-                    hintText: 'Email Address',
-                  ),
+                  buildTextField(controller: _emailController, icon: Icons.email, hintText: 'Email Address'),
                   SizedBox(height: 20),
-                  buildTextField(
-                    icon: Icons.lock,
-                    hintText: 'Password',
-                    obscureText: true,
-                  ),
+                  buildTextField(controller: _bioController, icon: Icons.info, hintText: 'Bio'),
                   SizedBox(height: 20),
-                  buildTextField(
-                    icon: Icons.lock,
-                    hintText: 'Retype Password',
-                    obscureText: true,
-                  ),
+                  buildTextField(controller: _locationController, icon: Icons.location_on, hintText: 'Location'),
+                  SizedBox(height: 20),
+                  buildTextField(controller: _passwordController, icon: Icons.lock, hintText: 'Password', obscureText: true),
+                  SizedBox(height: 20),
+                  buildTextField(controller: _retypePasswordController, icon: Icons.lock, hintText: 'Retype Password', obscureText: true),
                   SizedBox(height: 20),
                   Row(
                     children: [
@@ -92,20 +167,11 @@ class _SignUpPageState extends State<SignUpPage> {
                           });
                         },
                       ),
-                      Text(
-                        "I agree to the ",
-                        style: TextStyle(color: AppColors.primaryColor),
-                      ),
+                      Text("I agree to the ", style: TextStyle(color: AppColors.primaryColor)),
                       GestureDetector(
                         onTap: () {},
-                        child: Text(
-                          "Terms & Privacy",
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: AppColors.buttonTextColor,
-                          ),
-                        ),
-                      )
+                        child: Text("Terms & Privacy", style: TextStyle(fontWeight: FontWeight.bold, color: AppColors.buttonTextColor)),
+                      ),
                     ],
                   ),
                   SizedBox(height: 10),
@@ -113,25 +179,19 @@ class _SignUpPageState extends State<SignUpPage> {
                     width: double.infinity,
                     height: 55,
                     child: ElevatedButton(
-                      onPressed: () {},
+                      onPressed: saveUserToDatabase,
                       style: ElevatedButton.styleFrom(
                         backgroundColor: AppColors.buttonColor,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(30),
-                        ),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
                       ),
-                      child: Text(
-                        "Sign Up",
-                        style: TextStyle(
-                          color: AppColors.buttonTextColor,
-                          fontSize: 18,
-                        ),
-                      ),
+                      child: Text("Sign Up", style: TextStyle(color: AppColors.buttonTextColor, fontSize: 18)),
                     ),
                   ),
                   SizedBox(height: 20),
                   GestureDetector(
-                    onTap: () {},
+                    onTap: () {
+                      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => LoginScreen(),));
+                    },
                     child: Text(
                       "Have an account? Sign In",
                       style: TextStyle(
@@ -144,7 +204,7 @@ class _SignUpPageState extends State<SignUpPage> {
                   SizedBox(height: 40),
                 ],
               ),
-            )
+            ),
           ],
         ),
       ),
@@ -152,6 +212,7 @@ class _SignUpPageState extends State<SignUpPage> {
   }
 
   Widget buildTextField({
+    required TextEditingController controller,
     required IconData icon,
     required String hintText,
     bool obscureText = false,
@@ -163,6 +224,7 @@ class _SignUpPageState extends State<SignUpPage> {
         borderRadius: BorderRadius.circular(30),
       ),
       child: TextField(
+        controller: controller,
         obscureText: obscureText,
         decoration: InputDecoration(
           prefixIcon: Icon(icon, color: AppColors.primaryColor),
@@ -177,7 +239,6 @@ class _SignUpPageState extends State<SignUpPage> {
   }
 }
 
-/// Custom Clipper to create top-right rounded shape
 class TopRightRoundedClipper extends CustomClipper<Path> {
   @override
   Path getClip(Size size) {

@@ -4,14 +4,21 @@ class User {
   String name;
   String email;
   String? bio;
-  String? photoUrl;
+  String? imageUrl;
+  String? location;
+  String? password;
+  String? isPublic;
+
 
   User({
     this.userId,
     required this.name,
     required this.email,
     this.bio,
-    this.photoUrl,
+    this.imageUrl,
+    this.location,
+    this.password,
+    this.isPublic
   });
 
   // Convert a User object into a Map. The keys must correspond to the names of the
@@ -22,9 +29,13 @@ class User {
       COL_USER_NAME: name,
       COL_USER_EMAIL: email,
       COL_USER_BIO: bio,
-      COL_USER_IMAGE_URL: photoUrl,
+      COL_USER_IMAGE_URL: imageUrl,
+      COL_USER_LOCATION: location,
+      COL_USER_PASSWORD: password,
+      COL_USER_IS_PUBLIC: isPublic,
     };
   }
+
 
   // Convert a Map into a User object.
   factory User.fromMap(Map<String, dynamic> map) {
@@ -33,13 +44,17 @@ class User {
       name: map[COL_USER_NAME],
       email: map[COL_USER_EMAIL],
       bio: map[COL_USER_BIO],
-      photoUrl: map[COL_USER_IMAGE_URL],
+      imageUrl: map[COL_USER_IMAGE_URL],
+      location: map[COL_USER_LOCATION],
+      password: map[COL_USER_PASSWORD],
+      isPublic: map[COL_USER_IS_PUBLIC]?.toString(),
     );
   }
 
+
   @override
   String toString() {
-    return 'User{userId: $userId, name: $name, email: $email, bio: $bio, photoUrl: $photoUrl}';
+    return 'User{userId: $userId, name: $name, email: $email, bio: $bio, photoUrl: $imageUrl}';
   }
 }
 
