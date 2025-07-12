@@ -1,7 +1,10 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:oddo_hackathon_project/Screens/Login.dart';
 import 'package:oddo_hackathon_project/constants.dart';
 import 'package:oddo_hackathon_project/database/db_method.dart';
 import 'package:oddo_hackathon_project/database/table_models.dart';
+import 'package:oddo_hackathon_project/screens/ProfilePageUSer.dart';
 import 'package:oddo_hackathon_project/screens/swap_request_page.dart';
 
 class SkillSwapHomePage extends StatefulWidget {
@@ -13,9 +16,11 @@ class _SkillSwapHomePageState extends State<SkillSwapHomePage> {
   bool showAvailability = true;
 
   List<User> availableUsers = [];
+  List<User> allUsers = []; // for search
   List<Skill> skills = [];
 
   final Db_Methods dbMethods = Db_Methods();
+  final TextEditingController searchController = TextEditingController();
 
   @override
   void initState() {
@@ -25,13 +30,25 @@ class _SkillSwapHomePageState extends State<SkillSwapHomePage> {
   }
 
   Future<void> loadUsers() async {
-    availableUsers = await dbMethods.getUsers();
+    allUsers = await dbMethods.getUsers();
+    availableUsers = List.from(allUsers);
     setState(() {});
   }
 
   Future<void> loadSkills() async {
     skills = await dbMethods.getSkills();
     setState(() {});
+  }
+
+  void filterUsers(String query) {
+    final filtered = allUsers.where((user) {
+      final name = user.name?.toLowerCase() ?? '';
+      return name.contains(query.toLowerCase());
+    }).toList();
+
+    setState(() {
+      availableUsers = filtered;
+    });
   }
 
   Widget buildSkillChip(String text) {
@@ -46,16 +63,16 @@ class _SkillSwapHomePageState extends State<SkillSwapHomePage> {
       child: Text(
         text,
         style: TextStyle(
-            color: AppColors.primaryColor,
-            fontWeight: FontWeight.w500,
-            fontSize: 12),
+          color: AppColors.primaryColor,
+          fontWeight: FontWeight.w500,
+          fontSize: 12,
+        ),
       ),
     );
   }
 
   Widget buildStatusBadge(String status) {
-    final Color badgeColor =
-    status == "Accepted" ? Colors.green : Colors.orange;
+    final Color badgeColor = status == "Accepted" ? Colors.green : Colors.orange;
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
       decoration: BoxDecoration(
@@ -65,7 +82,7 @@ class _SkillSwapHomePageState extends State<SkillSwapHomePage> {
       ),
       child: Text(
         status,
-        style: TextStyle(
+        style: const TextStyle(
           fontSize: 12,
           fontWeight: FontWeight.w600,
         ),
@@ -86,29 +103,55 @@ class _SkillSwapHomePageState extends State<SkillSwapHomePage> {
             children: [
               // Header
               Padding(
-                padding:
-                const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
                 child: Row(
                   children: [
                     const CircleAvatar(
                       radius: 24,
-                      backgroundImage: AssetImage("assets/profile.jpg"),
+                      backgroundImage: AssetImage("assets/images/skill_swap_logo.jpg"),
                     ),
                     const SizedBox(width: 12),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: const [
-                        Text("Welcome Back!",
-                            style: TextStyle(
-                                fontWeight: FontWeight.bold, fontSize: 16)),
-                        Text("123 Anywhere Street, Any City",
-                            style:
-                            TextStyle(fontSize: 12, color: Colors.grey)),
-                      ],
+                    InkWell(
+                      onTap: () {
+                        Navigator.of(context).push(
+                          MaterialPageRoute(builder: (context) => ModernProfilePage()),
+                        );
+                      },
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: const [
+                          Text(
+                            "Welcome Back!",
+                            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                          ),
+                          Text(
+                            "123 Anywhere Street, Any City",
+                            style: TextStyle(fontSize: 12, color: Colors.grey),
+                          ),
+                        ],
+                      ),
                     ),
                     const Spacer(),
-                    Icon(Icons.notifications_none,
-                        color: AppColors.primaryColor),
+                    IconButton(
+                      onPressed:  () {
+                        showDialog(context: context, builder: (context) {
+                          return CupertinoAlertDialog(
+                            title: Text("LOGOUT"),
+                            content: Text("Are you sure you want to logout?"),
+                            actions: [
+                              TextButton(onPressed: () {
+                                Navigator.of(context).push(MaterialPageRoute(builder: (context) => LoginScreen(),));
+                              }, child: Text("YES")
+                              ),
+                              TextButton(onPressed: () {
+                                Navigator.of(context).pop();
+                              }, child: Text("NO")
+                              )
+                            ],
+                          );
+                        },);
+                      },
+                        icon: Icon(Icons.swap_calls_outlined), color: AppColors.primaryColor),
                   ],
                 ),
               ),
@@ -117,14 +160,14 @@ class _SkillSwapHomePageState extends State<SkillSwapHomePage> {
               Padding(
                 padding: const EdgeInsets.all(16),
                 child: TextField(
+                  controller: searchController,
+                  onChanged: filterUsers,
                   decoration: InputDecoration(
-                    hintText: "Search by skill or availability...",
+                    hintText: "Search by name...",
                     filled: true,
                     fillColor: Colors.white,
-                    prefixIcon:
-                    Icon(Icons.search, color: AppColors.primaryColor),
-                    contentPadding: const EdgeInsets.symmetric(
-                        vertical: 0, horizontal: 20),
+                    prefixIcon: const Icon(Icons.search, color: AppColors.primaryColor),
+                    contentPadding: const EdgeInsets.symmetric(vertical: 0, horizontal: 20),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(30),
                       borderSide: BorderSide.none,
@@ -137,25 +180,24 @@ class _SkillSwapHomePageState extends State<SkillSwapHomePage> {
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16),
                 child: Container(
-                  padding:
-                  const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
                   decoration: BoxDecoration(
                     color: AppColors.primaryColor,
                     borderRadius: BorderRadius.circular(16),
                   ),
                   child: Row(
                     children: [
-                      Expanded(
+                      const Expanded(
                         child: Text(
                           "Your Skills, Your Power.\nLet’s Swap!",
-                          style: const TextStyle(
-                              color: Colors.white,
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold),
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
                       ),
-                      const Icon(Icons.swap_horiz,
-                          color: Colors.white, size: 40),
+                      const Icon(Icons.swap_horiz, color: Colors.white, size: 40),
                     ],
                   ),
                 ),
@@ -163,42 +205,35 @@ class _SkillSwapHomePageState extends State<SkillSwapHomePage> {
 
               const SizedBox(height: 20),
 
-              // Categories
+              // Skills
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16),
                 child: Wrap(
                   spacing: 8,
                   runSpacing: 8,
-                  children: skills
-                      .map((skill) => buildSkillChip(skill.name ?? ""))
-                      .toList(),
+                  children: skills.map((skill) => buildSkillChip(skill.name ?? "")).toList(),
                 ),
               ),
 
               const SizedBox(height: 20),
 
-              // Toggle buttons
+              // Toggle Buttons
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16),
                 child: Row(
                   children: [
                     Expanded(
                       child: ElevatedButton(
-                        onPressed: () => setState(() {
-                          showAvailability = true;
-                        }),
+                        onPressed: () => setState(() => showAvailability = true),
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: showAvailability
-                              ? AppColors.primaryColor
-                              : Colors.white,
-                          foregroundColor: showAvailability
-                              ? Colors.white
-                              : AppColors.primaryColor,
+                          backgroundColor:
+                          showAvailability ? AppColors.primaryColor : Colors.white,
+                          foregroundColor:
+                          showAvailability ? Colors.white : AppColors.primaryColor,
                           elevation: showAvailability ? 4 : 0,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(12),
-                            side:
-                            BorderSide(color: AppColors.primaryColor),
+                            side: BorderSide(color: AppColors.primaryColor),
                           ),
                         ),
                         child: const Text("Availability"),
@@ -207,21 +242,16 @@ class _SkillSwapHomePageState extends State<SkillSwapHomePage> {
                     const SizedBox(width: 12),
                     Expanded(
                       child: ElevatedButton(
-                        onPressed: () => setState(() {
-                          showAvailability = false;
-                        }),
+                        onPressed: () => setState(() => showAvailability = false),
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: !showAvailability
-                              ? AppColors.primaryColor
-                              : Colors.white,
-                          foregroundColor: !showAvailability
-                              ? Colors.white
-                              : AppColors.primaryColor,
+                          backgroundColor:
+                          !showAvailability ? AppColors.primaryColor : Colors.white,
+                          foregroundColor:
+                          !showAvailability ? Colors.white : AppColors.primaryColor,
                           elevation: !showAvailability ? 4 : 0,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(12),
-                            side:
-                            BorderSide(color: AppColors.primaryColor),
+                            side: BorderSide(color: AppColors.primaryColor),
                           ),
                         ),
                         child: const Text("Pending"),
@@ -233,21 +263,18 @@ class _SkillSwapHomePageState extends State<SkillSwapHomePage> {
 
               const SizedBox(height: 20),
 
-              // Section Header
+              // Section Title
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16),
                 child: Text(
-                  showAvailability
-                      ? "Top Swappers"
-                      : "Pending Requests",
-                  style:
-                  const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+                  showAvailability ? "Top Swappers" : "Pending Requests",
+                  style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
                 ),
               ),
 
               const SizedBox(height: 10),
 
-              // Cards
+              // User Cards
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16),
                 child: Column(
@@ -266,6 +293,11 @@ class _SkillSwapHomePageState extends State<SkillSwapHomePage> {
                         ],
                       ),
                       child: ListTile(
+                        onTap: () {
+                          Navigator.of(context).push(
+                            MaterialPageRoute(builder: (context) => ModernProfilePage()),
+                          );
+                        },
                         leading: const CircleAvatar(
                           radius: 28,
                           backgroundColor: AppColors.primaryColor,
@@ -273,31 +305,22 @@ class _SkillSwapHomePageState extends State<SkillSwapHomePage> {
                         ),
                         title: Text(
                           user.name ?? "",
-                          style: const TextStyle(
-                              fontWeight: FontWeight.bold),
+                          style: const TextStyle(fontWeight: FontWeight.bold),
                         ),
                         subtitle: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             const SizedBox(height: 4),
                             if (showAvailability) ...[
-                              Text(
-                                  "Offers: N/A",
-                                  style:
-                                  const TextStyle(fontSize: 12)),
-                              Text(
-                                  "Wants: N/A",
-                                  style:
-                                  const TextStyle(fontSize: 12)),
+                              const Text("Offers: N/A", style: TextStyle(fontSize: 12)),
+                              const Text("Wants: N/A", style: TextStyle(fontSize: 12)),
                             ],
                             const SizedBox(height: 4),
                             Row(
-                              children: [
-                                const Icon(Icons.star,
-                                    size: 16, color: Colors.amber),
-                                const SizedBox(width: 4),
-                                Text("4.0/5",
-                                    style: const TextStyle(fontSize: 12)),
+                              children: const [
+                                Icon(Icons.star, size: 16, color: Colors.amber),
+                                SizedBox(width: 4),
+                                Text("4.0/5", style: TextStyle(fontSize: 12)),
                               ],
                             ),
                           ],
@@ -321,9 +344,7 @@ class _SkillSwapHomePageState extends State<SkillSwapHomePage> {
                               borderRadius: BorderRadius.circular(20),
                             ),
                           ),
-                          child: Text(showAvailability
-                              ? "Request"
-                              : "Pending"),
+                          child: Text(showAvailability ? "Request" : "Pending"),
                         ),
                       ),
                     );

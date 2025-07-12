@@ -6,4 +6,4 @@ export 'package:path/path.dart';
 export 'package:oddo_hackathon_project/database/db_service.dart';
 export 'package:oddo_hackathon_project/database/table_models.dart';
 export 'package:oddo_hackathon_project/screens/SkillSwapHomePage.dart';
-export 'package:oddo_hackathon_project/screens/sign_up_page.dart';
+export  'package:oddo_hackathon_project/screens/sign_up_page.dart';
