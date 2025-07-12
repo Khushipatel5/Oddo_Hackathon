@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:oddo_hackathon_project/Screens/Login.dart';
+import 'package:oddo_hackathon_project/Screens/Profile.dart';
 import 'package:oddo_hackathon_project/screens/sign_up_page.dart';
 
 import 'screens/ResetPasswordPage.dart';
@@ -35,7 +37,7 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: SignUpPage(),
+      home: LoginScreen(),
     );
   }
 }
