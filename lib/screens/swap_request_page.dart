@@ -1,13 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:oddo_hackathon_project/constants.dart';
 
-class AppColors {
-  static const Color primaryColor = Color(0xFF344f77); // Dark blue
-  static const Color backgroundColor = Colors.white;
-  static const Color inputFieldColor = Colors.white;
-  static const Color formContainerColor = Color(0xFF344f77); // Dark blue
-  static const Color buttonColor = Color(0xFF344f77); // Dark blue button
-  static const Color buttonTextColor = Colors.white; // white text
-}
 
 class SkillSwapScreen extends StatefulWidget {
   @override
