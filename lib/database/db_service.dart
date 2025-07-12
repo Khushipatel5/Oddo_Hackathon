@@ -65,9 +65,9 @@ class AppDatabase{
             FOREIGN KEY ($COL_REQUESTED_SKILL_ID) REFERENCES $TBL_SKILLS_NAME($COL_SKILL_ID)
           )
         ''');
-
-        return _database!;
       },
     );
+
+    return _database!;
   }
 }
